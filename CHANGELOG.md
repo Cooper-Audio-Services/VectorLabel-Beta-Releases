@@ -12,6 +12,58 @@ number (git commit count) + short SHA, shown in the menu-bar footer.
 
 ## [Unreleased]
 
+
+### From the 2026-08-30 full review — 46 findings fixed
+
+Every confirmed finding from the senior review (docs/reviews/2026-08-30-beta-full-review.md)
+was fixed and regression-tested; the suite grew from 785 to 871 tests.
+
+#### Added
+
+- The Brady parts-database import promised in these notes is now actually reachable: Supply Catalog editor ▸ "Import Brady parts…" reads Brady Workstation's parts file from your own machine into the selected group. Entries your catalog already carries always win, printable areas and pack quantities are never invented, and the summary says what was skipped as well as what was added.
+- Brother network printer auto-discovery now actually works: the first background search silently destroyed itself and permanently blocked every later one, so printers advertising on the network were never found without adding them by IP.
+- The six network-capable wide-head P-touch models (PT-9800PCN, PT-D800W, PT-E800W, PT-E850TKW, PT-P900W, PT-P950NW) can now really be used as network printers — they were offered in the Add-network-printer picker but no driver ever listed or opened them. Network printing on these models is hardware-unverified.
+
+#### Changed
+
+- Changed: the supply picker now opens large groups (over 60 supplies) with categories collapsed — the 932-supply M6/M7 group no longer opens as one giant scroll.
+- The cut options offered for each Brother printer now come from that model's declared capabilities — QL and TD models are no longer offered half-cut (or any cut, on cutter-less models), and cut bits a model doesn't declare are never sent.
+- Cassette reads are now limited to the Brady models whose status format has actually been decoded (M610/M710/M510); other Brady models show no telemetry rather than mis-read supply data.
+- Installing the beta no longer steals double-click for template and custom-label files: the beta registers its document types at a lower Launch Services rank, so the production apps stay the default and the beta opens files via Open With or its own Open dialogs.
+- Wide-format Brady models no longer inherit the M610's 2-inch head limit when auto-rotating a design to fit the loaded supply (affects hardware-unverified models only; the M610's own verified guard is unchanged).
+
+#### Fixed
+
+- Fixed a wrong label size on genuine M6-33/BM-33-427 wire wraps: the catalog had given them the square 1.5"x1.5" printable panel that really belongs to the M6-109/BM-109-427 wrap, so the bottom half-inch printed onto the clear laminate tail. The 109 is back as its own supply (square panel, feed rotation on, as measured on real hardware), the 33 gets its true 1.5"x1.0" panel, and existing catalogs migrate automatically without touching your own edits.
+- 599 orderable Brady part numbers that were silently missing from the catalog now resolve — colour and material siblings of curated supplies (for example the 1" B-483 continuous tape M6C-1000-483). A loaded cassette or imported .BWT template naming one of them previously matched no supply at all.
+- The Brady BBP85 supply group no longer lists made-up part numbers like "CART", "TAPE" and "VINYL" with buy buttons that searched Brady's site for those words — free-text entries in Brady's parts data are now filtered out when the supply table is generated.
+- Upgrading no longer deletes empty supply categories you created yourself — only categories the migration itself emptied of retired auto-generated entries are cleaned up.
+- Fixed a rare timing window where editing a supply while a print job was being prepared could leave the app resolving the pre-edit catalog until the next edit.
+- Brother jobs now send each model's own feed margin (35 dots on the newer QLs, 24/35 on TD) instead of the P-touch 14, and die-cut labels feed 0 so content stays registered to the die — the hardware-validated P-touch models are byte-for-byte unchanged.
+- Brother Flexible ID (FLe) die-cut labels now declare the label's own length on the wire, matching Brother's driver, so the printer can register the die-cut boundary (hardware-unverified; all tape printing is unchanged).
+- Label jobs longer than Brother's documented firmware maximum (1000 mm on tape, 500 mm on heat-shrink) are now refused up front with a message naming the limit, instead of being sent into undefined printer behavior.
+- Brother media auto-detect now pads its status request to each model's own invalidate length (up to 400 bytes on QL-800-class printers), so a printer mid-parse of an interrupted job can no longer swallow the request and silently report no cassette.
+- Beta builds' update-failure alerts now send you to the beta releases page instead of the production downloads page (which has no beta installers).
+- The beta update prompt's "what's new" notes now include the offered beta's own changes, not just production patches released in between.
+- Beta update alerts now name the exact beta you're running (e.g. 1.20.0-beta.2) instead of the ambiguous numeric version, and "You're up to date" on a beta says "newest beta" rather than implying a production release shipped.
+- A hand-made beta tag with a short version number (like v1.20-beta.9) can no longer outrank properly numbered releases in the beta updater.
+- Fixed: the New Template dialog's label-size list no longer breaks — or silently selects the wrong supply — when a supply name or part number contains quotes or HTML characters.
+- Fixed: a supply, group, or category name containing a line break no longer silently disables its buttons in the supply picker and buy controls.
+- Fixed: printer status updates (like an M611 battery tick) no longer reset the supply picker's list to the top or knock the cursor out of the search box while it's open.
+- Fixed: the Print window's buy buttons now fold large colour ranges behind a caret with per-part colour dots (like the designers), instead of rendering hundreds of flat buttons in the supply sidebar.
+- Fixed: in AutoPrint, live supply-catalog edits from Engine Preferences now reach both the print window and the in-app template editor — previously whichever window reacted second could keep stale supply geometry until relaunch.
+- Fixed: editing the middle of a supply-search query no longer teleports the cursor to the end after every keystroke.
+- Fixed: searching the supply picker for "multi-up" or "2 across" now finds multi-across supplies — the field the search looked at was never being sent to the app's web UI.
+- Fixed: the newly recognised Brady printers (i3300, BBP, S-series, BMP, M710/M510, i-series) can now actually be discovered over USB — plugging one in used to show nothing, while an attached M610 or M611 was listed once per registered sibling (~15 duplicate rows). Every connected printer now appears exactly once. Printing on the new models remains hardware-unverified.
+- Multi-up label stock selected on an i-series printer now logs a clear warning that side-by-side tiling isn't supported there yet (each label prints on its own row), instead of silently consuming several times the stock; the printer's own multi-up count is now read from its telemetry.
+- Multi-up tiling now spaces columns by the supply's real inter-label gap instead of packing them edge-to-edge (which would have printed every column after the first onto the liner). Hardware-unverified — no multi-up stock has been printed yet.
+- The supply catalogue's labels-across counts are now actually used when a printer can't report what's loaded — they previously fed nothing.
+- Printing to a Brother P-touch over Bluetooth no longer reports Done while labels are still feeding: the driver now reads out the printer's status stream before closing the connection (as it already did over USB), so a jam or an empty cassette fails the job instead of counting it complete. Bluetooth printing itself is still hardware-unverified.
+- Printing on two USB label printers at the same time no longer risks the second job's connection setup disturbing the first printer mid-transfer.
+- A paired Bluetooth printer whose model name contains another model's name (for example TD-2125NWB and TD-2125N) no longer appears twice in the printer list with jobs routed by luck.
+- The Engine no longer opens an unattended Bluetooth connection to re-read the cassette the moment a paired printer connects; Bluetooth status reads stay user-initiated, matching the background sweep's existing rule.
+- AutoPrint jobs that name no printer can no longer be routed to a paired-but-absent Bluetooth printer that the printer menu deliberately hides.
+
 ### Added
 
 - **Betas are published, and beta builds update themselves.** Beta releases go to their own public
