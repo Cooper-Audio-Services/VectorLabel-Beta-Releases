@@ -66,6 +66,13 @@ was fixed and regression-tested; the suite grew from 785 to 871 tests.
 
 ### Added
 
+- **The Brady i3300 can be added and printed to as a network printer.** Brady's own software
+  drives it over plain TCP port 9100 with no lock handshake, and now so does VectorLabel — it
+  appears in the add-network-printer picker and in subnet scans. Network support is deliberately
+  limited to the models Brady's data marks as needing no lock (the i3300 and the i-series); the
+  BBP/M710/BMP lines require a lock exchange that isn't implemented yet, and offering them a
+  network entry with no working driver behind it is exactly the trap this fixes. Hardware-unverified.
+
 - **Betas are published, and beta builds update themselves.** Beta releases go to their own public
   repo, separate from production's, and a beta build checks that one — so a production install can
   never be offered a beta, and a beta can never install a production package over your working
@@ -301,6 +308,33 @@ was fixed and regression-tested; the suite grew from 785 to 871 tests.
   can't leave the queue stuck.
 
 ### Fixed
+
+- **A network i3300 is no longer mistaken for an M611 — the mistake that sent it print jobs it
+  cannot parse.** Three doors let that happen and all three are closed: network printers are now
+  identified the way Brady's own software identifies them, by the "model-name" hostname the printer
+  registers, instead of by which ports happen to be open (an open telemetry port marks the whole
+  PICL family, not the M611); the add-network-printer dialog no longer silently defaults the model
+  to M611 and now checks the pick against the device's own name — correcting it, or refusing with
+  an explanation when the device names a model VectorLabel can't drive over the network; and a
+  Brady-named device that nothing can drive is reported by name instead of being quietly stored as
+  a Brother P-touch.
+
+- **A busy Brady printer no longer gets its job cut off mid-stream.** A USB write that made no
+  progress for ten seconds was treated as fatal, truncating the job before its closing commands —
+  which leaves the printer waiting forever on a job that "never ends". Sends now ride out stalls
+  the way Brady's own software does, giving up only after a full minute of no progress.
+
+- **M611 supply detection is fast again.** beta.2 added one property (the multi-up count) to the
+  M611's status request, and the printer's firmware answers a request naming an unknown property
+  with errors instead of values — so every cassette read failed, detect took a minute of retries,
+  and live print progress fell back to timed pacing. The M611 now sends exactly the request that
+  was validated against real hardware (a test pins it byte-for-byte), and the multi-up property is
+  only requested on the i-series models whose data it came from.
+
+- **Preferences no longer counts a disconnected Bluetooth printer as connected.** The Printers tab
+  now uses the same rule as the menu: paired-but-disconnected Bluetooth printers sit in their own
+  collapsed Bluetooth section with a Connect button, and the "N printers connected" headline counts
+  only printers you can actually use.
 
 - **A release tag can no longer publish from the wrong branch.** The release workflow accepted any
   `v*` tag from any branch, so a production-shaped tag pushed from the beta branch would have
