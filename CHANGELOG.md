@@ -75,6 +75,17 @@ number (git commit count) + short SHA, shown in the menu-bar footer.
 
 ### Fixed
 
+- The installer now hands the installed apps to the logged-in user instead of
+  leaving them owned by root — a root-owned install blocked any later user-level
+  replacement of the apps (the in-app updater's .pkg run recreated the problem on
+  every update).
+- The Custom Designer no longer offers the Vectorworks wire-export fields (Number,
+  Cable Name, Signal…) in a text object's Field and Formula pickers when no
+  database is loaded — those belong to the Template Designer. With no database it
+  now shows "No database selected"; once one is loaded, its own columns appear.
+- The release notes in the "update available" prompt no longer scroll jumpily — the
+  text height was being re-estimated while scrolling; it's now laid out fully up
+  front.
 - Clicking a designer's Dock icon while the app was still launching could crash it
   (a reopen event arriving before the window controller existed — seen in the field
   on the Custom Designer). Both designers now handle the early event safely.
