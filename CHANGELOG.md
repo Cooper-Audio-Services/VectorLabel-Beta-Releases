@@ -12,6 +12,88 @@ number (git commit count) + short SHA, shown in the menu-bar footer.
 
 ## [Unreleased]
 
+### Added
+
+- Continuous Brady supplies now show their roll length and material name. The vendor
+  data ships neither, so both were researched against Brady's own product pages and
+  spec sheets — and only verified values are filled in: 50 ft M6/M7 cartridges,
+  100 ft B30 vinyls, 85 ft B33 rolls, 275 ft bulk CleanLift, metre-encoded sleeve
+  SKUs, and more. Families whose length could not be verified honestly stay blank
+  rather than guessing. Material names (Vinyl, Glossy Permanent Polyester,
+  Self-Laminating Vinyl, Tedlar…) come from the same research, and supplies whose
+  "material" was really a width or sleeve diameter in disguise got their real one.
+- The Supply Catalog editor's category list now folds like the designer's supply
+  picker: a chevron per category, Expand all / Collapse all buttons, your fold state
+  remembered, and big groups opening folded instead of as one giant scroll.
+
+### Changed
+
+- Supplies that are the same physical product under different Brady naming eras are
+  now one entry with all their part numbers — the 0.24" terminal-block tape was
+  listed three times (BM71C-240-498, BM7C-240-498, BPTLTB-498-240) with one part
+  number each. Your own renamed or edited supplies are never merged.
+- Previous-generation part-number series (TLS2200's PTL-, BMP61's BM-/BM61-, the
+  renamed MC-/MC1-) are now marked **legacy**: hidden from the supply pickers so the
+  current range isn't buried under old names, but kept in the catalog so imported
+  templates and detected cassettes still resolve them. Each supply has a "Legacy"
+  tick box in the catalog editor, so you can hide or restore any supply yourself.
+- BBP85 support is removed, including its supply group — it's a multicolor sign
+  printer, and VectorLabel supports thermal printers only. A supply group of your
+  own that merely lists BBP85 alongside other printers is left alone.
+- The multicolor cut now covers the whole catalog: BBP35(37) and GlobalMark
+  Color & Cut are removed too (Brady's own configuration declares their color
+  panels), disappearing from driver registration, supply-group printer lists, and
+  the B30 group's name. The color-capable J7300, M811J and S3700 remain
+  recognition-only entries so a plugged-in one is reported honestly as
+  unsupported instead of being misidentified.
+- Legacy detection now works from the CURRENT series instead of a list of old ones:
+  in the M6/M7 (and M4/M5) groups, a supply with no native-series part number is
+  legacy. The first pass only knew a few old prefixes and left most previous-era
+  rows (BM61D, BM71, PTS, PSPT, PTLEP…) visible.
+- A supply-catalog change — the Setup wizard, or an Apply in the catalog editor —
+  now updates an OPEN supply picker in any designer window immediately, keeping
+  your scroll position and selection. Previously the picker waited until you
+  closed and reopened it.
+- The legacy tick now also exists per PART NUMBER: old-series twins riding on a
+  current die (M6-31-427's BM-31-427) are auto-flagged and lose their buy buttons
+  in the pickers, while imported templates and detected cassettes still resolve
+  them. Toggle per part in the catalog editor, where legacy parts show dimmed.
+- The Supply Catalog editor now has the same search as the designer's supply
+  picker: any field or part number, scoped to This Group or All Groups (picking a
+  result from another group switches to it), with the scope remembered.
+- The main Preferences window no longer collapses its sections — folding stays
+  where the lists are long: the supply catalog editor and the setup wizard.
+- The "available as …" materials list next to the selected supply no longer wraps
+  the designer header onto many lines — it shows one ellipsized line, with the
+  full list in the tooltip when you hover it.
+- The M6/M7 group no longer shows two continuous buckets: the generated
+  "Continuous" category folds into the curated "Continuous Tapes", and tapes of
+  the same width that sat once in each (the 1" tape had a 3-part row AND a
+  20-part row) merge into one entry with every part number.
+- The "Choose a label supply" window is wider: it now leaves the same margin at the
+  sides as above and below, so part-number buttons and colour dots stop wrapping.
+
+### Fixed
+
+- Clicking a designer's Dock icon while the app was still launching could crash it
+  (a reopen event arriving before the window controller existed — seen in the field
+  on the Custom Designer). Both designers now handle the early event safely.
+- The Engine's menu-bar icon now keeps a stable identity: macOS remembers where you
+  dragged it, and menu-bar managers like Bartender recognise it across launches and
+  sleep/wake instead of treating it as a brand-new unknown icon each time (it was
+  being destroyed and re-created on every wake). Recovery now rebuilds the icon only
+  when it is actually gone.
+- New in both designers' app menu: "Show Print Engine…" — launches the Engine if
+  needed and brings up its Preferences, so a hidden or crowded-out menu-bar icon
+  can never lock you out of the Engine.
+- Dragging the divider between the category list and the detail pane in the Supply
+  Catalog editor no longer stutters: the drag was measured against the moving divider
+  itself (so every tick fought the last one) and wrote settings to disk on every
+  mouse-move. It now tracks smoothly and saves its position once, on release.
+- In the supply picker, the "N part numbers" button no longer stretches into a tall
+  grey box with its label floating mid-air when expanded — it stays at the top of
+  its cell.
+
 
 ### From the 2026-08-30 full review — 46 findings fixed
 
