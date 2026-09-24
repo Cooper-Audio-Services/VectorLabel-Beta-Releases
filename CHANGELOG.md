@@ -14,6 +14,11 @@ number (git commit count) + short SHA, shown in the menu-bar footer.
 
 ### Added
 
+- The Custom Designer's database menu now shows the FULL PATH of the bound file and
+  has a "Reveal in Finder" item. The filename alone made two same-named files in
+  different folders indistinguishable — editing the wrong copy looked like "refresh
+  doesn't pick up my changes".
+
 - Continuous Brady supplies now show their roll length and material name. The vendor
   data ships neither, so both were researched against Brady's own product pages and
   spec sheets — and only verified values are filled in: 50 ft M6/M7 cartridges,
