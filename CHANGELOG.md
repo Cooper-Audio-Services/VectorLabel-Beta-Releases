@@ -14,10 +14,159 @@ number (git commit count) + short SHA, shown in the menu-bar footer.
 
 ### Added
 
+- **Cloud printer sharing.** Sign in to (or create) a VectorLabel account in the
+  Engine's new **Sharing** tab and your printers can be used from your other Macs —
+  and by people you share them with — as if they were plugged in locally:
+  - **Sharing side:** while this Mac is signed in, every printer connected to it is
+    available on your other Macs signed in to the same account — there's no switch to
+    turn on and no list to pick from. The Engine publishes their live status (including
+    the loaded supply) and prints jobs sent to them through the relay; those jobs show
+    in Recent Prints with who sent them, and a local/cloud/all filter appears there once
+    you're signed in. Signing out takes them back.
+  - **Using shared printers:** printers on your other Macs appear in the menu under
+    **My Cloud Printers**, and printers shared with you under **Shared With Me** —
+    collapsible groups like the Bluetooth one. Pick one in a designer or the print
+    window and print normally: queued, progress and completion show just as for a
+    local printer. Offline cloud printers aren't offered as print targets, and a cloud
+    printer is never chosen automatically.
+  - **Sharing with others** is its own step: right-click a printer in the menu →
+    **Share…** to invite someone by email to that printer, everything on this Mac, or
+    your whole account. Nobody else sees your printers until you do. The Sharing tab
+    lists what you've shared (with Revoke) and what's shared with you (with per-printer
+    Show/Hide).
+  - **Accounts are entirely optional** — with no account the Engine does nothing new
+    and contacts no new servers. The hosted service it runs through has been live at
+    vectorlabel.cooperaudioservices.com since October 1, 2026, but printing between two
+    real Macs through it hasn't been tested yet.
+- **Local network sharing (beta).** Share printers with other Macs on the same network
+  with no account at all, in Preferences ▸ Sharing ▸ Local network:
+  - **Sharing side:** "Enable local sharing" (off by default) lets anyone on the network
+    find this Mac and print to every printer connected to it. There is no password and
+    jobs travel unencrypted: turn it on only on a network you trust, and remember the
+    setting goes with the Mac to other networks. Web pages can't use it (browser
+    connections are refused). Jobs show in Recent Prints with the sending Mac's name,
+    under a new **LAN** filter.
+  - **Using shared printers:** turn on "Find printers on this network" (off by
+    default), or add a Mac by its IP address or `.local` name. Its printers appear in the
+    menu under **Local Network Printers** and print like any other printer. A Mac added by
+    address keeps its printers listed as offline while it's away, and a printer with a job
+    in flight never vanishes mid-job; an idle Mac that was found automatically drops off the
+    list when it stops sharing. Adding this Mac's own address is detected and flagged.
+  - LAN sharing does nothing on the network until one of these is turned on (or a Mac is
+    added by address). macOS's Local Network prompt — which most people first see for
+    ordinary network-printer discovery — now explains both uses. Not yet tested between
+    two real Macs.
+- **Administrator accounts confirm sign-in with a code sent by email.** Signing in to
+  an administrator's VectorLabel account in the Engine's Sharing tab now asks for the
+  6-digit code we email you (with "Send a New Code" if it doesn't arrive or runs out).
+  Everyone else signs in exactly as before.
+- **Sign in with your browser.** The Engine now signs in to your VectorLabel account
+  through your default web browser, so your password manager can fill in your details —
+  and if you're already signed in to the website there, you just choose **Connect this
+  Mac**. The browser hands the sign-in back to the Engine through a connection inside
+  this Mac (nothing is opened to your network for it). Preferences ▸ Sharing has
+  **Sign in with your browser** and **Create an account**; the email-and-password form
+  is still there under **Sign in without a browser** (including the emailed code for
+  administrator accounts) for when a browser isn't an option. New in this beta and not
+  yet tried with every browser — please report one that doesn't come back to the Engine.
+- **A quicker way to sign in from the menu.** While you're signed out, the Engine's menu
+  shows one row — "Sign in to share & use cloud printers…" — where your cloud printers
+  would otherwise appear. Clicking it starts signing in with your browser; while that's
+  waiting, the row reads "Finish signing in in your browser…" (click it to bring the page
+  back) with a **Cancel**. If the browser can't be used, it opens the sign-in form in
+  Preferences ▸ Sharing instead. It's gone once you're signed in, and an account is still
+  optional: just showing the row contacts nothing.
 - The Custom Designer's database menu now shows the FULL PATH of the bound file and
   has a "Reveal in Finder" item. The filename alone made two same-named files in
   different folders indistinguishable — editing the wrong copy looked like "refresh
   doesn't pick up my changes".
+- Formulas can now use any field, whatever its name: write it in square brackets —
+  `[Length (m)]`, `[Cable #]`, `[Src.Port]` (a `]` in the name is written `]]`).
+  Names with brackets, punctuation or accents could not be used in a formula at all
+  before. A bracketed field works everywhere a plain one does, including comparisons
+  like `[Other Device]<>""`. Also new: `""` inside quoted text is one quote mark,
+  so `"12"""` prints `12"`. Formulas that use only ordinary field names are still
+  saved exactly as before, so older versions can keep reading them.
+- **Formula fields are now little chips.** In the Template Designer and the Custom
+  Designer, the fields in a formula show as chips (like the field buttons) instead
+  of raw names — in the text and barcode panels, the table-cell panel and the
+  Formula editor window. Click a field button to put that field where your cursor
+  is: it's joined to its neighbours with `&`, and clicking inside quoted text splits
+  the text around it, so the result reads the way you meant. Right-click a chip for
+  **Replace field…** (a searchable list of the label's fields) or **Remove**; a field
+  the label doesn't have shows in amber, and a short note under the formula points
+  out an unknown field, a field stuck inside quotes, or a quote or `[` that's never
+  closed. Everything else — functions, `&`, quoted text — you still type, and you
+  can drag a column header from the Records / Database pane into a formula. A curly
+  quote you type or paste becomes a straight one where it starts or ends quoted text;
+  one typed inside quoted text (an inch mark, ⌥⇧[) stays as typed. Keyboard: ⇧F10
+  opens a chip's menu (so does Return on a selected chip in the Formula editor
+  window), and ↑↓ / Return / Esc work in it. Templates are still saved as the same
+  formula text as before. This is new in this beta and hasn't been tried with every
+  keyboard and input method yet — please report anything that types oddly.
+
+### Changed
+
+- **VectorLabel is no longer labelled "alpha".** Releases from `main` are production
+  releases; `-beta.N` releases are betas — pre-release builds for invited accounts that
+  may change. The license's warranty section is now "No warranty": the same as-is
+  terms, and it says beta builds are pre-release and may change or break. What's
+  verified hasn't changed: the Brady M611 is hardware-validated; the Brady M610 cut and
+  the Brother P-touch drivers are still not hardware-confirmed.
+
+- **Sharing has no switches any more — signing in and inviting are the steps.** The
+  "Share my printers" switch and the per-printer "Share My Printers" list are gone, and
+  so is the "visible to people I share with" switch for your printers on other Macs
+  (that one stays on the website's Printers page for now). While a Mac is signed in,
+  **all** of its printers are now always offered to your other Macs signed in to the
+  account, and to anyone you've invited to your whole account (or to that Mac) — if you
+  had sharing switched off, or narrowed to some printers, in an earlier beta, that
+  choice no longer applies once you update. To keep a Mac's printers to itself, sign it
+  out. Inviting one printer still shares just that printer. On the local network,
+  "Enable local sharing" (the old "Share my printers on this network", same setting)
+  now always shares every printer connected to the Mac. The Sharing tab is reorganised
+  into two clearly labelled halves — **Cloud — VectorLabel account** and **Local network
+  — no account**.
+
+- **Signing out of the Engine now cleans up after itself.** Besides taking this Mac's
+  printers back, Sign Out now also retires the Mac on your VectorLabel account (recorded
+  as signed out, not as revoked by you), so your account no longer collects a stale entry
+  for this Mac every time it signs out. If the Mac is offline when you sign out, it still signs
+  out at once: its printers may show as offline on your other Macs for a little while, and
+  the Engine finishes removing them by itself as soon as it's back online — no new
+  sign-in and no trip to the website's Devices page. Until that's done the Engine keeps
+  the old sign-in's key in the Keychain, used for nothing else, and deletes it once the
+  service confirms. If the Keychain is locked or its access prompt is declined, the
+  Engine just tries again later; it doesn't give up on the sign-out. That unfinished
+  sign-out is the only thing a signed-out Engine contacts the VectorLabel service for;
+  with nothing waiting, it contacts nothing. It needs the matching update on the
+  VectorLabel service (an older service still gets the printers taken back, as before).
+  Checked against a simulated service; not yet tried with a real sign-out made while
+  offline.
+
+- **Brady BBP30, BBP31, BBP33, S3000 and S3100, and an i3300 on USB: untested changes from the
+  i3300 fixes.** These printers use the i3300's print language, so three of the i3300 fixes
+  under Fixed reach them too, and none has been tried on any of them. With no supply reading
+  (none of them has one over USB), upright die-cut labels now default to the i3300's
+  orientation, a 90° turn from earlier betas. Full-job sends now go out in 128 KB pieces with
+  a pause between. Rolls with labels side by side are combined the way the i3300 lays them out.
+  If labels come out turned or misplaced on one of these printers, please report it. The M610,
+  M710, M510, M611 and Brother printers print exactly as before.
+
+- **VectorLabel is now proprietary software**, licensed under the new VectorLabel
+  License Agreement instead of MIT + Commons Clause. The installer's license screen
+  shows the new agreement. Copies of earlier releases keep their original license.
+  Each app now also carries the agreement and the notices for the third-party
+  components it uses (libusb, CoreXLSX, XMLCoder, ZIPFoundation, bwip-js) in its
+  Resources folder, and the .zip and .dmg downloads include both files beside the apps.
+- The website's source moved out of this repository into the private
+  VectorLabel-Cloud repo, which will also host the upcoming account system and cloud
+  print relay. The live site is unaffected until the hosting cutover, which must
+  complete before this beta is promoted to a production release.
+- Creating an account in the Engine now links to the Terms of Service and Privacy
+  Policy it asks you to accept, and the "This computer's name" field says who sees
+  that name: your other devices, the people you invite or share printers with, and,
+  when you create the account there, it becomes your account's name.
 
 - Continuous Brady supplies now show their roll length and material name. The vendor
   data ships neither, so both were researched against Brady's own product pages and
@@ -80,6 +229,153 @@ number (git commit count) + short SHA, shown in the menu-bar footer.
 
 ### Fixed
 
+- Clicking an object in the designers no longer nudges it. A click's tiny pointer
+  wobble (common on trackpads) used to snap an object that wasn't on the grid onto it,
+  with no undo step; now nothing moves until the pointer has really travelled, and
+  the same goes for the resize, line-end and rotate handles. Starting to edit wrapped
+  centred or right-aligned text, or auto-scale text, also no longer shifts or resizes
+  it. Checked in the same web engine the app uses with simulated clicks; not yet
+  confirmed with every trackpad and mouse.
+
+- **A network Brady i3300 is no longer added as an M611 — the mistake that made every job
+  fail on the printer with a "script error".** VectorLabel identifies a network Brady by the
+  hostname it registers, but an i3300 with no hostname was anonymous, and an anonymous printer
+  answering Brady's control port was assumed to be an M611. The i3300 answers that port too, yet
+  can't read M611 print jobs. The Brady drivers now ask a nameless printer for its model
+  ("i3300") before claiming it, and an i3300 already saved as an M611 is driven as the i3300 it
+  is, with no need to re-add it. Confirmed on a real i3300. The same question is now also put to
+  a printer whose network name doesn't say what it is (one set by an IT department, say), which
+  could otherwise be added as a Brother P-touch. And an i3110, i3311, i4311, i5311 or i7500 that
+  was added as an M611 the same way is now listed under its own model. Neither of those has been
+  tried on a printer yet.
+
+- **Self-laminating labels on a network Brady i3300 no longer print sideways in a corner of the
+  label.** VectorLabel never read the i3300's loaded supply, so it fell back to the M610's way
+  of turning die-cut labels, which is 90° wrong for the i3300's B33 stock. It now reads the
+  supply from the printer over the network (part number, printable area, labels across, supply
+  and ribbon left) and orients each label to fit it. With no reading, it uses the i3300's own
+  default. On the i3300, die-cut labels that already printed the right way round (B33-18-483)
+  still do. Confirmed on a real i3300 with B33-75-427 (self-laminating), B33-18-483 (die-cut)
+  and B30C-2250-595-WT (continuous). The i3300's default also applies to the printers that share
+  its print language; see the BBP/S note under Changed.
+
+- **On i3300 self-laminating wraps, labels and the calibration grid now print on the white
+  printable patch instead of the clear laminate tail.** The i3300 lines a design up at the tail
+  end of the label (the end that leaves the printer first), so a design sized to the printable
+  patch landed on the tail. VectorLabel now shifts it onto the patch by the label length minus
+  the printable length minus the gap between labels, all as the printer reports them (1⅜" on
+  B33-75-427). Confirmed on a real i3300.
+
+- **Large jobs on a network Brady i3300 no longer silently stop printing or jam the printer.**
+  The i3300 prints about 2.8 seconds per row, much slower than VectorLabel assumed. A big job
+  piled up faster than it printed until the printer quietly discarded the rest. After that it
+  ignored every job until it was switched off and on, while VectorLabel still reported the job
+  as done. VectorLabel now watches the printer's own feed counter and sends each row only when
+  the printer is at most 8 rows behind. Progress shows the rows really printed. This applies to
+  die-cut and self-laminating stock over the network; continuous tape still uses the timed
+  sending. Confirmed on a real i3300 with a ~130-label B33-75-427 job.
+  Since that test the counting has been tightened. These changes are worked out from the field
+  measurements and checked against a simulated printer, but haven't been run on the real one:
+  - The counter reads about 1.5% short of the label pitch. VectorLabel used to allow a fixed 5%
+    for that, which could report a job as done with a couple of rows missing (a roll running
+    out near the end) and could stall "one label at a time" printing about 34 rows in. It now
+    measures the counter on the first row of each job, pausing briefly to do so, and confirms
+    the count at a few more short pauses. A job is reported done only when every row has fed.
+  - If the printer stops with rows still to print and reports an empty roll or ribbon or an
+    open print head, the job shows as paused and carries on once that's fixed (for up to 30
+    minutes). Otherwise, after a minute without feeding, the job is marked failed. The message
+    says how many rows were already sent and may still print, and suggests switching the
+    printer off and on if nothing else is wrong.
+  - If a supply's counter turns out not to measure the feed (some count labels instead), the
+    rest of that job, and later jobs on that supply, use the timed sending instead of failing.
+  - With "Every Label" cutting and no cutter, the job now waits for each label to be cut on this
+    path too, as it does on every other Brady.
+
+- **On i3300 rolls with two or more labels side by side, consecutive labels now print beside
+  each other instead of stacked on one label.** Each record is still its own label; they are
+  placed in pairs (or threes, fours…) across the roll. The step that combines them assumed the
+  M610's way of turning labels, so on the i3300 it put the second label further along the
+  same label (onto a self-laminating wrap's clear tail). An odd last label prints alone in the
+  first column. Confirmed on a real i3300 with B33-75-427 (two across, centred on both labels).
+
+- A formula could suddenly print half of itself (e.g. `@ “&Other_Device&IF(…`)
+  after you edited it: macOS "smart quotes" silently swapped straight quotes next to
+  the text you were typing for curly ones, which the formula engine didn't treat as
+  quotes. Curly double quotes now work as quotes in formulas — in both designers, the
+  print window and the printed label (AutoPrint and the Engine too) — so templates
+  already damaged this way print correctly without being opened.
+  **One behaviour change to know about:** inside text that starts with a straight `"`,
+  a curly quote now ENDS the text when it is directly followed by `&`, or by `,` and
+  something other than a space (`"12”&…`, `"6”,12”"`) — that's where smart quotes
+  damage a formula. Before, it was printed as part of the text. Anywhere else a curly
+  quote inside quoted text is still printed as written, so inch marks and quoted words
+  like `"12” "`, `" 12”` and `"(“spare”)"` print exactly as before. Opening a template
+  never rewrites a curly quote (older versions would read the file differently); the
+  formula box instead points out a curly quote that ends quoted text, so you can
+  retype it as `"` — or as `""` if you meant a quote mark.
+- The designers and the print window no longer apply macOS smart quotes, smart dashes
+  or text replacements while you type. On a cable label a `"` is an inch mark, and
+  `12"` was turning into `12”`. Other apps keep your system setting.
+- Renaming a column in the Custom Designer now also updates formulas inside table
+  cells and never changes words inside quoted text; it also works for column names
+  with spaces or punctuation.
+- A formula naming a field called `constructor` or `toString` previewed as program
+  text in the designer instead of the name.
+- Clicking a field button under the formula box could do nothing (the click was lost
+  while the box saved itself). When it did work, it always added the field at the
+  very END of the formula, right after the previous field, so the two ran together
+  into one wrong name. Field buttons now insert at the cursor.
+- A formula typed in the side panel was lost if you clicked another object on the
+  canvas before pressing Return. Panel formulas now apply as you type: the label preview updates
+  live, and one ⌘Z undoes the whole edit.
+- Dragging a column header onto a formula box dropped its raw name as text, which
+  broke for names like `Length (m)`. It now inserts that field.
+- A printer that leaves a Mac (unplugged or switched off) now disappears for the people
+  you share with, and their cloud print jobs to it are refused. Before, it could stay in
+  their list and keep accepting their jobs. Both ends now check: the cloud service stops
+  offering it, and your Mac refuses a cloud job for any printer it no longer offers.
+  Your shares are kept, so it comes back for the same people once it's plugged back in.
+- **Share… ▸ This printer** now works in the Engine, for any printer connected to this
+  Mac while it's signed in. It was always dimmed, because the Engine couldn't look up the
+  cloud listing of a printer plugged into its own Mac. The cloud service now gives each
+  Mac the ids of its own printers, without listing them back to it as cloud printers. If
+  the printer has only just connected, the share window looks it up for a few seconds,
+  and otherwise says why it isn't available yet. Sharing a whole Mac or account, and
+  sharing from the website, work as before.
+- **Signing out** of the Engine now first takes this Mac's printers away from your other
+  Macs and the people you share with, and their jobs to them are refused. Signing back
+  in adds this Mac to your account as a new computer, so after a
+  sign-out its printers never came back: they stayed listed, offline, for good — next to
+  the new copies, for anyone you'd shared your whole account with. Invitations to **This
+  Mac** or to one of its printers don't carry over to the new sign-in and need sending
+  again; **Whole account** shares cover it again by themselves. If this Mac is offline
+  when you sign out, the Engine finishes taking its printers away by itself once it's
+  back online (see **Signing out of the Engine now cleans up after itself** under
+  Changed). Revoking a Mac on the website's Devices page also takes its printers out of
+  everyone's lists. Quitting the Engine or losing the network still just shows the
+  printers as offline until this Mac is back.
+- Recent Prints now shows who sent a job that came from another computer, under its
+  title: "From friend@example.com · Cloud", or "From Shop Mac · Local network". Local
+  prints look as before.
+- The beta's "macOS blocked local network access" messages now name the app the way
+  System Settings lists it — "VectorLabel Engine (Beta)" — instead of "VectorLabel
+  Engine", which a beta user couldn't find there.
+- These sharing fixes haven't yet been tried between two real Macs.
+- Jobs relayed in from another computer (cloud or local network) are handled more
+  strictly on the printing Mac: a job can't reuse the id of one already queued or
+  printed here, the sender's file paths are never kept for Reprint, and its title and
+  template name are length-limited before they reach Recent Prints and notifications.
+- Changing which printers you share in Preferences ▸ Sharing now reaches the Macs
+  using them right away, instead of waiting for the next printer-status change.
+- A printer on another Mac (cloud or local network) now gets the same printable-area
+  outline, head-margin band and unsupported-tape warning in the designers and print
+  window as that printer plugged in locally — they were all missing.
+- A busy Brady M610/M710 no longer momentarily "becomes a different printer": the
+  USB scan reads the serial by opening the device, and while a job held it the open
+  failed and the printer's identity silently fell back to a pseudo-serial — a print
+  sent to that phantom identity failed with "openFailed" (bug report #7). Identity
+  is now sticky per physical port, and the scan no longer touches a device a job
+  is using.
 - The installer now hands the installed apps to the logged-in user instead of
   leaving them owned by root — a root-owned install blocked any later user-level
   replacement of the apps (the in-app updater's .pkg run recreated the problem on
